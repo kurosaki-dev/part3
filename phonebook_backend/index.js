@@ -29,10 +29,6 @@ app.get("/", (req, res) => {
   res.send("<h1>Bulaga!</h1>");
 });
 
-app.get("/api/persons", (req, res) => {
-  res.json(data);
-});
-
 app.get("/info", (req, res) => {
   const date = new Date();
 
@@ -40,6 +36,22 @@ app.get("/info", (req, res) => {
     <p>Phonebook has info for ${data.length} people</p>
     <p>${date.toString()}</p>
     </div>`);
+});
+
+app.get("/api/persons", (req, res) => {
+  res.json(data);
+});
+
+app.get("/api/persons/:id", (req, res) => {
+  const id = req.params.id;
+
+  const person = data.find((person) => person.id === id);
+
+  if (person) {
+    res.json(person);
+  } else {
+    res.status(404).end();
+  }
 });
 
 const PORT = 3001;
