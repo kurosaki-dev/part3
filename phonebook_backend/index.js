@@ -10,6 +10,7 @@ morgan.token("type", (req, res) => {
 });
 
 app.use(morgan(":method :url :status - :response-time ms :type"));
+app.use(express.static("dist"));
 
 let data = [
   {
