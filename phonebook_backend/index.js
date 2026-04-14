@@ -29,6 +29,7 @@ app.get("/", (req, res) => {
   res.send("<h1>Bulaga!</h1>");
 });
 
+// info numbers for phonebook persons
 app.get("/info", (req, res) => {
   const date = new Date();
 
@@ -38,10 +39,12 @@ app.get("/info", (req, res) => {
     </div>`);
 });
 
+// get all phonebook persons
 app.get("/api/persons", (req, res) => {
   res.json(data);
 });
 
+// get single phonebook person
 app.get("/api/persons/:id", (req, res) => {
   const id = req.params.id;
 
@@ -52,6 +55,15 @@ app.get("/api/persons/:id", (req, res) => {
   } else {
     res.status(404).end();
   }
+});
+
+// delete single phonebook person
+app.delete("/api/persons/:id", (req, res) => {
+  const id = req.params.id;
+
+  data = data.filter((person) => person.id !== id);
+
+  res.status(204).end();
 });
 
 const PORT = 3001;
