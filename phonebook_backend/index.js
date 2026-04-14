@@ -68,6 +68,7 @@ app.delete("/api/persons/:id", (req, res) => {
   res.status(204).end();
 });
 
+// genereate unique id
 const generateId = () => {
   const Id =
     new Date().valueOf().toString(36) + Math.random().toString(36).substring(2);
@@ -78,6 +79,20 @@ const generateId = () => {
 // create single phonebook person
 app.post("/api/persons", (req, res) => {
   const body = req.body;
+
+  // not accepting missing inputs
+  if (!body.name || !body.number) {
+    return res.status(400).json({
+      error: "missing input",
+    });
+  }
+
+  // not accepting duplicate names
+  if (data.find((person) => person.name === body.name)) {
+    return res.status(400).json({
+      error: "name must be unique",
+    });
+  }
 
   const newPerson = {
     id: generateId(),
