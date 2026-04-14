@@ -2,6 +2,8 @@ const express = require("express");
 
 const app = express();
 
+app.use(express.json());
+
 let data = [
   {
     id: "1",
@@ -64,6 +66,28 @@ app.delete("/api/persons/:id", (req, res) => {
   data = data.filter((person) => person.id !== id);
 
   res.status(204).end();
+});
+
+const generateId = () => {
+  const Id =
+    new Date().valueOf().toString(36) + Math.random().toString(36).substring(2);
+
+  return Id;
+};
+
+// create single phonebook person
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+
+  const newPerson = {
+    id: generateId(),
+    name: body.name,
+    number: body.number,
+  };
+
+  data = data.concat(newPerson);
+
+  res.json(newPerson);
 });
 
 const PORT = 3001;
