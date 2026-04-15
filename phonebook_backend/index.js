@@ -1,6 +1,9 @@
+require("dotenv").config();
+
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const Person = require("./models/person");
 
 const app = express();
 
@@ -53,7 +56,9 @@ app.get("/info", (req, res) => {
 
 // get all phonebook persons
 app.get("/api/persons", (req, res) => {
-  res.json(data);
+  Person.find({}).then((person) => {
+    res.json(person);
+  });
 });
 
 // get single phonebook person
@@ -97,25 +102,23 @@ app.post("/api/persons", (req, res) => {
     });
   }
 
-  // not accepting duplicate names
-  if (data.find((person) => person.name === body.name)) {
-    return res.status(400).json({
-      error: "name must be unique",
+  Person.findOne({ name: body.name }).then((existingPerson) => {
+    if (existingPerson) {
+      return res.status(400).json({ error: "name must be unique" });
+    }
+
+    const newPerson = new Person({
+      name: body.name,
+      number: body.number,
     });
-  }
 
-  const newPerson = {
-    id: generateId(),
-    name: body.name,
-    number: body.number,
-  };
-
-  data = data.concat(newPerson);
-
-  res.json(newPerson);
+    newPerson.save().then((savedPerson) => {
+      res.json(savedPerson);
+    });
+  });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
