@@ -79,22 +79,23 @@ app.post("/api/persons", (req, res, next) => {
     });
   }
 
-  Person.findOne({ name: body.name })
-    .then((existingPerson) => {
-      if (existingPerson) {
-        return res.status(400).json({ error: "name must be unique" });
-      }
+  Person.findOne({ name: body.name }).then((existingPerson) => {
+    if (existingPerson) {
+      return res.status(400).json({ error: "name must be unique" });
+    }
 
-      const newPerson = new Person({
-        name: body.name,
-        number: body.number,
-      });
+    const newPerson = new Person({
+      name: body.name,
+      number: body.number,
+    });
 
-      newPerson.save().then((savedPerson) => {
+    newPerson
+      .save()
+      .then((savedPerson) => {
         res.json(savedPerson);
-      });
-    })
-    .catch((error) => next(error));
+      })
+      .catch((error) => next(error));
+  });
 });
 
 app.put("/api/persons/:id", (req, res, next) => {
@@ -127,6 +128,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);

@@ -113,13 +113,23 @@ const App = () => {
             type: "success",
             message: `Added ${data.name}`,
           });
+
           setTimeout(() => {
             setNotification(null);
           }, 5000);
 
           emptyInputStates();
         })
-        .catch((error) => alert("Error adding data in phonebook"));
+        .catch((error) => {
+          console.log(error.response.data);
+          (setNotification({
+            type: "error",
+            message: error.response.data.error,
+          }),
+            setTimeout(() => {
+              setNotification(null);
+            }, 5000));
+        });
     }
   };
 
